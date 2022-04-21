@@ -71,6 +71,7 @@ public class ClienteCadastro extends javax.swing.JFrame {
         jButtonDel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(null);
 
         jPanelPrincipal.setBackground(new java.awt.Color(255, 255, 255));
@@ -173,8 +174,7 @@ public class ClienteCadastro extends javax.swing.JFrame {
                         .addGap(42, 42, 42)
                         .addComponent(jButtonAdd)
                         .addGap(18, 18, 18)
-                        .addComponent(jButtonDel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jButtonDel)))
                 .addGap(18, 18, 18)
                 .addComponent(jButtonSalvar)
                 .addGap(21, 21, 21))

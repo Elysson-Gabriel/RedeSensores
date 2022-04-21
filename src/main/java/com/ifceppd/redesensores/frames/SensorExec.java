@@ -50,20 +50,14 @@ public class SensorExec extends javax.swing.JFrame {
             case "Temperatura":
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgTemperatura.jpg")));
                 unidade = "°C";
-                this.jSliderLeitura.setMinimum(-90);
-                this.jSliderLeitura.setMaximum(60);
                 break;
             case "Umidade":
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgUmidade.png")));
                 unidade = "%";
-                this.jSliderLeitura.setMinimum(0);
-                this.jSliderLeitura.setMaximum(100);
                 break;
             case "Velocidade":
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgVelocidade.png")));
                 unidade = "km/h";
-                this.jSliderLeitura.setMinimum(0);
-                this.jSliderLeitura.setMaximum(250);
                 break;
             default:
                 break;
@@ -160,6 +154,7 @@ public class SensorExec extends javax.swing.JFrame {
         jLabelMin1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(null);
 
         jPanelPrincipal.setBackground(new java.awt.Color(255, 255, 255));
@@ -171,7 +166,10 @@ public class SensorExec extends javax.swing.JFrame {
         jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgVelocidade.png"))); // NOI18N
 
         jSliderLeitura.setMajorTickSpacing(5);
+        jSliderLeitura.setMaximum(250);
+        jSliderLeitura.setMinimum(-90);
         jSliderLeitura.setSnapToTicks(true);
+        jSliderLeitura.setValue(15);
         jSliderLeitura.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSliderLeituraStateChanged(evt);
@@ -216,8 +214,7 @@ public class SensorExec extends javax.swing.JFrame {
                         .addGap(114, 114, 114)
                         .addComponent(jLabelMin1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldLeitura, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jTextFieldLeitura, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jLabelImg)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

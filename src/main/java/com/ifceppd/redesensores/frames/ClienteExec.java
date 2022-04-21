@@ -133,6 +133,7 @@ public class ClienteExec extends javax.swing.JFrame {
         jTextAreaLog = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(null);
 
         jPanelPrincipal.setBackground(new java.awt.Color(255, 255, 255));

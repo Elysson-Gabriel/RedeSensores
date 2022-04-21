@@ -57,6 +57,7 @@ public class SensorCadastro extends javax.swing.JFrame {
         jButtonSalvar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(null);
 
         jPanelPrincipal.setBackground(new java.awt.Color(255, 255, 255));
