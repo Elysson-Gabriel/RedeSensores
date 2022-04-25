@@ -4,36 +4,24 @@
  */
 package com.ifceppd.redesensores;
 
-import com.ifceppd.redesensores.frames.SensorExec;
 import com.ifceppd.redesensores.cadastros.SensorCadastro;
 import com.ifceppd.redesensores.cadastros.ClienteCadastro;
-import com.ifceppd.redesensores.models.Sensor;
-import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.JMSException;
 
 
 /**
  *
  * @author elysson
  */
-public class RedeSensoresExec extends javax.swing.JFrame {
-    
-    private ArrayList<Sensor> sensores;
+public class RedeSensoresExe extends javax.swing.JFrame {
     
     /**
      * Creates new form Cliente
      */
-    public RedeSensoresExec() {
-        sensores = new ArrayList<Sensor>();
+    public RedeSensoresExe() {
         initComponents();
-    }
-    
-    public void criarSensor(Sensor s){
-        this.sensores.add(s);
-        new SensorExec(s).setVisible(true);
-    }
-    
-    public ArrayList<Sensor> getSensores(){
-        return this.sensores;
     }
 
     /**
@@ -101,6 +89,7 @@ public class RedeSensoresExec extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButtonSensor)
                         .addGap(13, 13, 13)))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(imgCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -117,12 +106,15 @@ public class RedeSensoresExec extends javax.swing.JFrame {
 
     private void jButtonSensorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSensorActionPerformed
         // TODO add your handling code here:
-        new SensorCadastro(this).setVisible(true);
+        new SensorCadastro().setVisible(true);
     }//GEN-LAST:event_jButtonSensorActionPerformed
 
     private void jButtonClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClienteActionPerformed
-        // TODO add your handling code here:
-        new ClienteCadastro(this).setVisible(true);
+        try {
+            new ClienteCadastro().setVisible(true);
+        } catch (JMSException ex) {
+            Logger.getLogger(RedeSensoresExe.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButtonClienteActionPerformed
 
     /**
@@ -142,14 +134,46 @@ public class RedeSensoresExec extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RedeSensoresExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RedeSensoresExe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RedeSensoresExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RedeSensoresExe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RedeSensoresExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RedeSensoresExe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RedeSensoresExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RedeSensoresExe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -186,7 +210,7 @@ public class RedeSensoresExec extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new RedeSensoresExec().setVisible(true);
+                new RedeSensoresExe().setVisible(true);
             }
         });
     }

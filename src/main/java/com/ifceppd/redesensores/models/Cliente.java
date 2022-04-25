@@ -4,7 +4,6 @@
  */
 package com.ifceppd.redesensores.models;
 
-import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 
 /**

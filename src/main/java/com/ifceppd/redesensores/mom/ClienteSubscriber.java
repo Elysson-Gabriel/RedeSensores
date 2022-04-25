@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.ifceppd.redesensores.frames;
+package com.ifceppd.redesensores.mom;
 
 import com.ifceppd.redesensores.models.Cliente;
 import javax.jms.Connection;
@@ -22,16 +22,16 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  *
  * @author elysson
  */
-public class ClienteExec extends javax.swing.JFrame {
+public class ClienteSubscriber extends javax.swing.JFrame {
     
     /**
      * Creates new form Cliente
      */
-    public ClienteExec() {
+    public ClienteSubscriber() {
         initComponents();
     }
     
-    public ClienteExec(Cliente c) throws Exception {
+    public ClienteSubscriber(Cliente c) throws Exception {
         initComponents();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
@@ -40,12 +40,9 @@ public class ClienteExec extends javax.swing.JFrame {
         DefaultListModel d = c.getSensores();
         Object[] lista = d.toArray();
         String topicName;
-        int index;
         
         for (Object s : lista) {
             topicName = s.toString();
-            index = topicName.indexOf("("); 
-            topicName = topicName.substring(0 , index);
             new Subscriber(topicName).Go();
         }
 
@@ -110,12 +107,17 @@ public class ClienteExec extends javax.swing.JFrame {
                      jTextAreaLog.setText(jTextAreaLog.getText() + 
                              "\n" + ((TextMessage)message).getText());
                      jTextAreaLog.setCaretPosition(jTextAreaLog.getText().length());
+                    
+                    /*String topicName = "";
+                    int index = topicName.indexOf("("); 
+                    topicName = topicName.substring(index, topicName.length());*/
                  }catch(Exception e){
                  }
             }
         }
     
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -196,14 +198,62 @@ public class ClienteExec extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClienteExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteSubscriber.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClienteExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteSubscriber.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClienteExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteSubscriber.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ClienteExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClienteSubscriber.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -224,7 +274,7 @@ public class ClienteExec extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClienteExec().setVisible(true);
+                new ClienteSubscriber().setVisible(true);
             }
         });
     }

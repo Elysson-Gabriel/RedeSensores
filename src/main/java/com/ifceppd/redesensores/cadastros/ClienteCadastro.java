@@ -4,16 +4,22 @@
  */
 package com.ifceppd.redesensores.cadastros;
 
-import com.ifceppd.redesensores.RedeSensoresExec;
-import com.ifceppd.redesensores.frames.ClienteExec;
+import com.ifceppd.redesensores.mom.ClienteSubscriber;
 import com.ifceppd.redesensores.models.Cliente;
-import com.ifceppd.redesensores.models.Sensor;
+import java.awt.Color;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.advisory.DestinationSource;
+import org.apache.activemq.command.ActiveMQTopic;
 
 /**
  *
@@ -21,30 +27,65 @@ import javax.swing.JOptionPane;
  */
 public class ClienteCadastro extends javax.swing.JFrame {
     
-    private RedeSensoresExec pai = null;
     private DefaultListModel listaDisp = null;
     private DefaultListModel listaAssin = null;
+    private static final String url = ActiveMQConnection.DEFAULT_BROKER_URL;
+    private ConnectionFactory connectionFactory = null;
+    private ActiveMQConnection connection = null;
+    private boolean achouTopico = false;
     
     /**
      * Creates new form Cliente
+     * @throws javax.jms.JMSException
      */
-    public ClienteCadastro() {
-        initComponents();
-    }
-    
-    public ClienteCadastro(RedeSensoresExec pPai) {
-        this.pai = pPai;
+    public ClienteCadastro() throws JMSException {
+        
+        /*
+         * Estabelecendo conexão com o Servidor JMS
+        */		
+        this.connectionFactory = new ActiveMQConnectionFactory(url);
+        this.connection = (ActiveMQConnection) connectionFactory.createConnection();
+        this.connection.start();
+        
         initComponents();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         listaDisp = new DefaultListModel();
         listaAssin = new DefaultListModel();
         
-        for (Sensor s: this.pai.getSensores()) {
-            listaDisp.addElement(s.getNome() + "(" + s.getParamMonitor() + ")");
-        }
+        Thread t1 = new Thread(new Runnable(){
+            public void run(){
+                while(!achouTopico){
+                    buscaTopicos();
+                }
+            }
+        });
+        t1.start();
         
-        this.jListDisp.setModel(listaDisp);
-        this.jListAssin.setModel(listaAssin);
+    }
+    
+    public void buscaTopicos(){
+        try {
+            DestinationSource destSource = connection.getDestinationSource();
+            Set<ActiveMQTopic> topicos = destSource.getTopics();
+            
+            if(!topicos.isEmpty()){
+                this.achouTopico = true;
+                this.jListDisp.setEnabled(true);
+                this.jListAssin.setEnabled(true);
+                this.jListDisp.setBackground(Color.white);
+                this.jListAssin.setBackground(Color.white);
+                
+                for (ActiveMQTopic topico : topicos) {
+                    listaDisp.addElement(topico.getTopicName());
+                }
+
+                this.jListDisp.setModel(listaDisp);
+                this.jListAssin.setModel(listaAssin);
+            }
+            
+        } catch (JMSException ex) {
+            Logger.getLogger(ClienteCadastro.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -82,6 +123,17 @@ public class ClienteCadastro extends javax.swing.JFrame {
 
         jLabelNome.setText("Nome:");
 
+        jTextFieldNome.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldNomeFocusGained(evt);
+            }
+        });
+        jTextFieldNome.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldNomeKeyReleased(evt);
+            }
+        });
+
         jButtonSalvar.setText("Salvar");
         jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -89,20 +141,14 @@ public class ClienteCadastro extends javax.swing.JFrame {
             }
         });
 
-        jListAssin.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jListAssin.setBackground(new java.awt.Color(204, 204, 204));
+        jListAssin.setEnabled(false);
         jScrollPane1.setViewportView(jListAssin);
 
         jLabelNome1.setText("Tópicos disponíveis:");
 
-        jListDisp.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jListDisp.setBackground(new java.awt.Color(204, 204, 204));
+        jListDisp.setEnabled(false);
         jScrollPane2.setViewportView(jListDisp);
 
         jLabelNome2.setText("Assinar tópicos:");
@@ -215,11 +261,9 @@ public class ClienteCadastro extends javax.swing.JFrame {
     private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
         // TODO add your handling code here:
         String nome = this.jTextFieldNome.getText();
-        boolean valido = false;
         Cliente c = null;
 
         if(!nome.isEmpty() && !listaAssin.isEmpty()){
-            valido = true;
             c = new Cliente(nome, listaAssin);
         }else{
             JOptionPane.showMessageDialog(this, "Verifique o nome e "
@@ -228,12 +272,20 @@ public class ClienteCadastro extends javax.swing.JFrame {
         }
 
         try {
-            new ClienteExec(c).setVisible(true);
+            new ClienteSubscriber(c).setVisible(true);
         } catch (Exception ex) {
             Logger.getLogger(ClienteCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.dispose();
     }//GEN-LAST:event_jButtonSalvarActionPerformed
+
+    private void jTextFieldNomeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldNomeFocusGained
+        
+    }//GEN-LAST:event_jTextFieldNomeFocusGained
+
+    private void jTextFieldNomeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldNomeKeyReleased
+        
+    }//GEN-LAST:event_jTextFieldNomeKeyReleased
 
     /**
      * @param args the command line arguments
@@ -272,7 +324,11 @@ public class ClienteCadastro extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClienteCadastro().setVisible(true);
+                try {
+                    new ClienteCadastro().setVisible(true);
+                } catch (JMSException ex) {
+                    Logger.getLogger(ClienteCadastro.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

@@ -13,6 +13,7 @@ public class Sensor {
     private String paramMonitor;
     private int limiteMin;
     private int limiteMax;
+    private int leituraAtual;
 
     public Sensor(String nome, String paramMonitor, int limiteMin, int limiteMax) {
         this.nome = nome;
@@ -51,6 +52,14 @@ public class Sensor {
 
     public void setLimiteMax(int limiteMax) {
         this.limiteMax = limiteMax;
+    }
+    
+    public int getLeituraAtual() {
+        return leituraAtual;
+    }
+
+    public void setLeituraAtual(int leituraAtual) {
+        this.leituraAtual = leituraAtual;
     }
     
 }

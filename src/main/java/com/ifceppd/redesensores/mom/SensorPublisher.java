@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.ifceppd.redesensores.frames;
+package com.ifceppd.redesensores.mom;
 
 import com.ifceppd.redesensores.models.Sensor;
 import java.awt.Color;
@@ -15,49 +15,73 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFrame;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.advisory.DestinationSource;
+import org.apache.activemq.command.ActiveMQTopic;
 
 /**
  *
  * @author elysson
  */
-public class SensorExec extends javax.swing.JFrame {
+public class SensorPublisher extends javax.swing.JFrame {
     
     private String unidade = null;
     private String nome = null;
     private String param = null;
     private Publisher publisher = null;
     private int min, max;
+    private Sensor atual;
+    
+    private static final String url = ActiveMQConnection.DEFAULT_BROKER_URL;
+    private ConnectionFactory connectionFactory = null;
+    private ActiveMQConnection connection = null;
     
     /**
      * Creates new form Cliente
      */
-    public SensorExec() {
+    public SensorPublisher() {
         initComponents();
     }
     
-    public SensorExec(Sensor s) {
+    public SensorPublisher(Sensor s) throws JMSException {
+        /*
+         * Estabelecendo conexão com o Servidor JMS
+        */		
+        this.connectionFactory = new ActiveMQConnectionFactory(url);
+        this.connection = (ActiveMQConnection) connectionFactory.createConnection();
+        this.connection.start();
+        this.atual = s;
+        
         initComponents();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        nome = s.getNome();
-        min = s.getLimiteMin();
-        max = s.getLimiteMax();
-        param = s.getParamMonitor();
+        this.nome = s.getNome();
+        this.min = s.getLimiteMin();
+        this.max = s.getLimiteMax();
+        this.param = s.getParamMonitor();
+        
+        DefaultBoundedRangeModel sm = new DefaultBoundedRangeModel();
         
         switch (param) {
             case "Temperatura":
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgTemperatura.jpg")));
                 unidade = "°C";
+                sm.setMinimum(-90);
+                sm.setMaximum(60);
                 break;
             case "Umidade":
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgUmidade.png")));
                 unidade = "%";
+                sm.setMinimum(0);
+                sm.setMaximum(100);
                 break;
             case "Velocidade":
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgVelocidade.png")));
                 unidade = "km/h";
+                sm.setMinimum(0);
+                sm.setMaximum(250);
                 break;
             default:
                 break;
@@ -66,9 +90,13 @@ public class SensorExec extends javax.swing.JFrame {
         this.jLabelTitulo.setText(nome);
         this.jTextFieldMin.setText(min + " " + unidade);
         this.jTextFieldMax.setText(max + " " + unidade);
-        
+        sm.setValue((min + max)/2);
+        this.jSliderLeitura.setModel(sm);
+        this.jTextFieldLeitura.setText(jSliderLeitura.getValue() + " " + unidade);
+        this.jTextFieldLeitura.setForeground(Color.GREEN);
+                
         try {
-            publisher = new Publisher(s.getNome());
+            publisher = new Publisher(s.getNome() + "(" + s.getParamMonitor() + ")");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,12 +125,12 @@ public class SensorExec extends javax.swing.JFrame {
              * Criando Session 
              */		
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
+            
             /*
              * Criando Topic
             */     
             Destination dest = session.createTopic(topicName);
-
+            
             /*
             * Criando Produtor
             */
@@ -155,6 +183,14 @@ public class SensorExec extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
         jPanelPrincipal.setBackground(new java.awt.Color(255, 255, 255));
@@ -165,7 +201,7 @@ public class SensorExec extends javax.swing.JFrame {
 
         jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgVelocidade.png"))); // NOI18N
 
-        jSliderLeitura.setMajorTickSpacing(5);
+        jSliderLeitura.setMajorTickSpacing(1);
         jSliderLeitura.setMaximum(250);
         jSliderLeitura.setMinimum(-90);
         jSliderLeitura.setSnapToTicks(true);
@@ -272,7 +308,7 @@ public class SensorExec extends javax.swing.JFrame {
                         + String.valueOf(leitura) + " " + unidade;
                 this.publisher.writeMessage(msg);
             } catch (JMSException ex) {
-                Logger.getLogger(SensorExec.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SensorPublisher.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else{
             this.jTextFieldLeitura.setForeground(Color.green);
@@ -284,6 +320,21 @@ public class SensorExec extends javax.swing.JFrame {
     private void jTextFieldMinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldMinActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldMinActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        try {
+            // TODO add your handling code here:
+            String topicName = atual.getNome() + "(" + atual.getParamMonitor() + ")";
+            this.connection.destroyDestination(new ActiveMQTopic(topicName));
+        } catch (JMSException ex) {
+            Logger.getLogger(SensorPublisher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -302,14 +353,38 @@ public class SensorExec extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SensorExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SensorPublisher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SensorExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SensorPublisher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SensorExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SensorPublisher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SensorExec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SensorPublisher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -322,7 +397,7 @@ public class SensorExec extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SensorExec().setVisible(true);
+                new SensorPublisher().setVisible(true);
             }
         });
     }

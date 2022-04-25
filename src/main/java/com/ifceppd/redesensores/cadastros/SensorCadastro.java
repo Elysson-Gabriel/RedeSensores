@@ -4,10 +4,15 @@
  */
 package com.ifceppd.redesensores.cadastros;
 
-import com.ifceppd.redesensores.RedeSensoresExec;
+import com.ifceppd.redesensores.RedeSensoresExe;
 import com.ifceppd.redesensores.models.Sensor;
+import com.ifceppd.redesensores.mom.SensorPublisher;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.JMSException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SpinnerNumberModel;
 
 /**
  *
@@ -15,17 +20,11 @@ import javax.swing.JOptionPane;
  */
 public class SensorCadastro extends javax.swing.JFrame {
     
-    private RedeSensoresExec pai = null;
     private String unidade = null;
     /**
      * Creates new form Cliente
      */
     public SensorCadastro() {
-        initComponents();
-    }
-    
-    public SensorCadastro(RedeSensoresExec pPai) {
-        this.pai = pPai;
         initComponents();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.jLabelImg.setIcon(null);
@@ -186,19 +185,21 @@ public class SensorCadastro extends javax.swing.JFrame {
         
         int limMin = Integer.parseInt(min);
         int limMax = Integer.parseInt(max);
-        boolean valido = false;
         Sensor s = null;
         
         if(!nome.isEmpty() && !param.equals("- Selecione -") && limMax > limMin){
-            valido = true;
             s = new Sensor(nome, param, limMin, limMax);
         }else{
             JOptionPane.showMessageDialog(this, "Verifique o nome, parâmetro monitorado "
                     + "ou valores dos limites", "Tente novamente!", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        this.pai.criarSensor(s);
+        
+        try {
+            new SensorPublisher(s).setVisible(true);
+        } catch (JMSException ex) {
+            Logger.getLogger(SensorCadastro.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         this.dispose();
     }//GEN-LAST:event_jButtonSalvarActionPerformed
@@ -208,28 +209,62 @@ public class SensorCadastro extends javax.swing.JFrame {
         this.jSpinnerMin.setEnabled(true);
         this.jSpinnerMax.setEnabled(true);
         
+        SpinnerNumberModel smMin = new SpinnerNumberModel();
+        SpinnerNumberModel smMax = new SpinnerNumberModel();
+        int min, max, val1 = 0, val2 = 0;
+        
         switch (this.jComboBoxParam.getSelectedItem().toString()) {
             case "Temperatura":
                 this.unidade = "°C";
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgTemperatura.jpg")));
+                min = -90;
+                max = 60;
+                smMin.setMinimum(min);
+                smMin.setMaximum(max);
+                smMax.setMinimum(min);
+                smMax.setMaximum(max);
+                val1 = -10;
+                val2 = 40;
                 break;
             case "Umidade":
                 this.unidade = "%";
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgUmidade.png")));
+                min = 0;
+                max = 100;
+                smMin.setMinimum(min);
+                smMin.setMaximum(max);
+                smMax.setMinimum(min);
+                smMax.setMaximum(max);
+                val1 = 5;
+                val2 = 30;
                 break;
             case "Velocidade":
                 this.unidade = "km/h";
                 this.jLabelImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgVelocidade.png")));
+                min = 0;
+                max = 250;
+                smMin.setMinimum(min);
+                smMin.setMaximum(max);
+                smMax.setMinimum(min);
+                smMax.setMaximum(max);
+                val1 = 0;
+                val2 = 110;
                 break;
             default:
                 this.unidade = "Und";
                 this.jLabelImg.setIcon(null);
+                this.jSpinnerMin.setValue(0);
+                this.jSpinnerMax.setValue(0);
                 this.jSpinnerMin.setEnabled(false);
                 this.jSpinnerMax.setEnabled(false);
                 break;
         }
         this.jLabelUnd.setText(unidade);
         this.jLabelUnd2.setText(unidade);
+        this.jSpinnerMin.setModel(smMin);
+        this.jSpinnerMax.setModel(smMax);
+        this.jSpinnerMin.setValue(val1);
+        this.jSpinnerMax.setValue(val2);
     }//GEN-LAST:event_jComboBoxParamItemStateChanged
 
     /**
