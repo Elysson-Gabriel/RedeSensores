@@ -4,11 +4,13 @@
  */
 package com.ifceppd.redesensores.models;
 
+import java.io.Serializable;
+
 /**
  *
  * @author elysson
  */
-public class Sensor {
+public class Sensor implements Serializable{
     private String nome;
     private String paramMonitor;
     private int limiteMin;

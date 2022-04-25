@@ -4,13 +4,11 @@
  */
 package com.ifceppd.redesensores.cadastros;
 
-import com.ifceppd.redesensores.RedeSensoresExe;
 import com.ifceppd.redesensores.models.Sensor;
 import com.ifceppd.redesensores.mom.SensorPublisher;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jms.JMSException;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 
@@ -26,7 +24,6 @@ public class SensorCadastro extends javax.swing.JFrame {
      */
     public SensorCadastro() {
         initComponents();
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.jLabelImg.setIcon(null);
         this.unidade = "Und";
     }

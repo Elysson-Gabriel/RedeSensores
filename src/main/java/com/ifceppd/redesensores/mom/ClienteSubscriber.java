@@ -5,16 +5,16 @@
 package com.ifceppd.redesensores.mom;
 
 import com.ifceppd.redesensores.models.Cliente;
+import com.ifceppd.redesensores.models.Sensor;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
@@ -23,6 +23,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  * @author elysson
  */
 public class ClienteSubscriber extends javax.swing.JFrame {
+    private Sensor s = null;
     
     /**
      * Creates new form Cliente
@@ -33,7 +34,6 @@ public class ClienteSubscriber extends javax.swing.JFrame {
     
     public ClienteSubscriber(Cliente c) throws Exception {
         initComponents();
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
         this.jLabelTitulo.setText(c.getNome());
         
@@ -102,17 +102,19 @@ public class ClienteSubscriber extends javax.swing.JFrame {
 
         @Override
         public void onMessage(Message message) {
-            if(message instanceof TextMessage){
-                 try{
-                     jTextAreaLog.setText(jTextAreaLog.getText() + 
-                             "\n" + ((TextMessage)message).getText());
-                     jTextAreaLog.setCaretPosition(jTextAreaLog.getText().length());
-                    
-                    /*String topicName = "";
-                    int index = topicName.indexOf("("); 
-                    topicName = topicName.substring(index, topicName.length());*/
-                 }catch(Exception e){
-                 }
+            if(message instanceof ObjectMessage){
+                try{
+                    ObjectMessage obj = (ObjectMessage) message;
+                    Sensor s = (Sensor) obj.getObject();
+                    jTextAreaLog.setText(jTextAreaLog.getText() + "\n" 
+                            + s.getNome() + ": " + s.getLeituraAtual());
+                    jTextAreaLog.setCaretPosition(jTextAreaLog.getText().length());
+                    /*
+                   String topicName = "";
+                   int index = topicName.indexOf("("); 
+                   topicName = topicName.substring(index, topicName.length());*/
+                }catch(Exception e){
+                }
             }
         }
     

@@ -13,13 +13,12 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFrame;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.advisory.DestinationSource;
 import org.apache.activemq.command.ActiveMQTopic;
 
 /**
@@ -54,9 +53,9 @@ public class SensorPublisher extends javax.swing.JFrame {
         this.connection = (ActiveMQConnection) connectionFactory.createConnection();
         this.connection.start();
         this.atual = s;
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         initComponents();
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.nome = s.getNome();
         this.min = s.getLimiteMin();
         this.max = s.getLimiteMax();
@@ -143,14 +142,15 @@ public class SensorPublisher extends javax.swing.JFrame {
             connection.start();
         }
 
-        public void writeMessage(String text)throws JMSException{
-            TextMessage message = session.createTextMessage();
-            message.setText(text);
+        public void enviaLeitura(Sensor s)throws JMSException{
+            ObjectMessage sensor = session.createObjectMessage();
+ 
+            sensor.setObject(s);
 
             /*
              * Publicando Mensagem
              */
-            publisher.send(message);
+            publisher.send(sensor);
         }
 
         public void close() throws JMSException{
@@ -303,10 +303,9 @@ public class SensorPublisher extends javax.swing.JFrame {
         
         if(leitura > max || leitura < min){
             this.jTextFieldLeitura.setForeground(Color.red);
+            this.atual.setLeituraAtual(leitura);
             try {
-                String msg =  nome + "(" + param +"): " 
-                        + String.valueOf(leitura) + " " + unidade;
-                this.publisher.writeMessage(msg);
+                this.publisher.enviaLeitura(this.atual);
             } catch (JMSException ex) {
                 Logger.getLogger(SensorPublisher.class.getName()).log(Level.SEVERE, null, ex);
             }

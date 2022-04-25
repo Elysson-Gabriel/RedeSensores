@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -47,27 +46,31 @@ public class ClienteCadastro extends javax.swing.JFrame {
         this.connection = (ActiveMQConnection) connectionFactory.createConnection();
         this.connection.start();
         
-        initComponents();
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         listaDisp = new DefaultListModel();
         listaAssin = new DefaultListModel();
         
         Thread t1 = new Thread(new Runnable(){
             public void run(){
                 while(!achouTopico){
-                    buscaTopicos();
+                    try {
+                        buscaTopicos();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ClienteCadastro.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
         t1.start();
         
+        initComponents();
+        
     }
     
-    public void buscaTopicos(){
+    public void buscaTopicos() throws InterruptedException{
         try {
             DestinationSource destSource = connection.getDestinationSource();
             Set<ActiveMQTopic> topicos = destSource.getTopics();
-            
+            Thread.sleep(100);
             if(!topicos.isEmpty()){
                 this.achouTopico = true;
                 this.jListDisp.setEnabled(true);
