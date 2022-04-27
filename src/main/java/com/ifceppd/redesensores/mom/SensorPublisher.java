@@ -19,7 +19,6 @@ import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFrame;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.command.ActiveMQTopic;
 
 /**
  *
@@ -53,7 +52,7 @@ public class SensorPublisher extends javax.swing.JFrame {
         this.connection = (ActiveMQConnection) connectionFactory.createConnection();
         this.connection.start();
         this.atual = s;
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
         initComponents();
         this.nome = s.getNome();
@@ -326,13 +325,8 @@ public class SensorPublisher extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        try {
-            // TODO add your handling code here:
-            String topicName = atual.getNome() + "(" + atual.getParamMonitor() + ")";
-            this.connection.destroyDestination(new ActiveMQTopic(topicName));
-        } catch (JMSException ex) {
-            Logger.getLogger(SensorPublisher.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_formWindowClosing
 
     /**

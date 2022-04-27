@@ -35,7 +35,7 @@ public class ClienteSubscriber extends javax.swing.JFrame {
     public ClienteSubscriber(Cliente c) throws Exception {
         initComponents();
         
-        this.jLabelTitulo.setText(c.getNome());
+        this.jLabelTitulo.setText(c.getNome() + " - Tópicos Assinados");
         
         DefaultListModel d = c.getSensores();
         Object[] lista = d.toArray();
@@ -106,13 +106,24 @@ public class ClienteSubscriber extends javax.swing.JFrame {
                 try{
                     ObjectMessage obj = (ObjectMessage) message;
                     Sensor s = (Sensor) obj.getObject();
-                    jTextAreaLog.setText(jTextAreaLog.getText() + "\n" 
-                            + s.getNome() + ": " + s.getLeituraAtual());
-                    jTextAreaLog.setCaretPosition(jTextAreaLog.getText().length());
-                    /*
-                   String topicName = "";
-                   int index = topicName.indexOf("("); 
-                   topicName = topicName.substring(index, topicName.length());*/
+                    String msg = "\n" + s.getNome() + ": " + s.getLeituraAtual();
+                    
+                    switch (s.getParamMonitor()) {
+                        case "Temperatura":
+                            jTextAreaTemp.setText(jTextAreaTemp.getText() + msg + " °C");
+                            jTextAreaTemp.setCaretPosition(jTextAreaTemp.getText().length());
+                            break;
+                        case "Umidade":
+                            jTextAreaUmid.setText(jTextAreaUmid.getText() + msg + " %");
+                            jTextAreaUmid.setCaretPosition(jTextAreaUmid.getText().length());
+                            break;
+                        case "Velocidade":
+                            jTextAreaVeloc.setText(jTextAreaVeloc.getText() + msg + " km/h");
+                            jTextAreaVeloc.setCaretPosition(jTextAreaVeloc.getText().length());
+                            break;
+                        default:
+                            break;
+                    }
                 }catch(Exception e){
                 }
             }
@@ -131,10 +142,16 @@ public class ClienteSubscriber extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanelPrincipal = new javax.swing.JPanel();
-        jLabelUnd = new javax.swing.JLabel();
         jLabelTitulo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaLog = new javax.swing.JTextArea();
+        jTextAreaTemp = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextAreaUmid = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextAreaVeloc = new javax.swing.JTextArea();
+        jLabelUnd1 = new javax.swing.JLabel();
+        jLabelUnd2 = new javax.swing.JLabel();
+        jLabelUnd3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -142,16 +159,33 @@ public class ClienteSubscriber extends javax.swing.JFrame {
 
         jPanelPrincipal.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabelUnd.setText("Mensagens recebidas dos tópicos assinados:");
-
         jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelTitulo.setText("Nome do sensor");
+        jLabelTitulo.setText("Nome do cliente");
 
-        jTextAreaLog.setEditable(false);
-        jTextAreaLog.setColumns(20);
-        jTextAreaLog.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaLog);
+        jTextAreaTemp.setEditable(false);
+        jTextAreaTemp.setColumns(15);
+        jTextAreaTemp.setRows(5);
+        jScrollPane1.setViewportView(jTextAreaTemp);
+
+        jTextAreaUmid.setEditable(false);
+        jTextAreaUmid.setColumns(15);
+        jTextAreaUmid.setRows(5);
+        jScrollPane2.setViewportView(jTextAreaUmid);
+
+        jTextAreaVeloc.setEditable(false);
+        jTextAreaVeloc.setColumns(15);
+        jTextAreaVeloc.setRows(5);
+        jScrollPane3.setViewportView(jTextAreaVeloc);
+
+        jLabelUnd1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabelUnd1.setText("Sensores de temperatura:");
+
+        jLabelUnd2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabelUnd2.setText("Sensores de umidade:");
+
+        jLabelUnd3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabelUnd3.setText("Sensores de velocidade:");
 
         javax.swing.GroupLayout jPanelPrincipalLayout = new javax.swing.GroupLayout(jPanelPrincipal);
         jPanelPrincipal.setLayout(jPanelPrincipalLayout);
@@ -161,9 +195,24 @@ public class ClienteSubscriber extends javax.swing.JFrame {
             .addGroup(jPanelPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jLabelUnd, javax.swing.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(jPanelPrincipalLayout.createSequentialGroup()
+                        .addComponent(jLabelUnd1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelPrincipalLayout.createSequentialGroup()
+                        .addGap(200, 200, 200)
+                        .addComponent(jLabelUnd3, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelPrincipalLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelUnd2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanelPrincipalLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(16, 16, 16))
         );
         jPanelPrincipalLayout.setVerticalGroup(
             jPanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,10 +220,16 @@ public class ClienteSubscriber extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabelTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabelUnd)
+                .addGroup(jPanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelUnd1)
+                    .addComponent(jLabelUnd2)
+                    .addComponent(jLabelUnd3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(6, 6, 6))
         );
 
         getContentPane().add(jPanelPrincipal);
@@ -283,9 +338,15 @@ public class ClienteSubscriber extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabelTitulo;
-    private javax.swing.JLabel jLabelUnd;
+    private javax.swing.JLabel jLabelUnd1;
+    private javax.swing.JLabel jLabelUnd2;
+    private javax.swing.JLabel jLabelUnd3;
     private javax.swing.JPanel jPanelPrincipal;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextAreaLog;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextAreaTemp;
+    private javax.swing.JTextArea jTextAreaUmid;
+    private javax.swing.JTextArea jTextAreaVeloc;
     // End of variables declaration//GEN-END:variables
 }
